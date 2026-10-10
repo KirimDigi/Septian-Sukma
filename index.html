@@ -6553,12 +6553,13 @@
                     >
                       <div class="saic-wrap-link">
                         <a
-                          href="index-1.htm?post_id=39473&#038;comments=1&#038;get=500&#038;order=DESC"
+                          href="javascript:void(0);"
                           id="saic-link-39473"
                           class="saic-link saic-icon-link saic-icon-link-true auto-load-true"
+                          style="color: #866350; cursor: pointer;"
                         >
-                          <i class="saico-comment"></i>
-                          <span>1</span>
+                          <i class="saico-comment" style="color: #866350;"></i>
+                          <span id="saic-top-count">0</span>
                           Ucapan
                         </a>
                       </div>
@@ -6566,7 +6567,7 @@
                       <div
                         id="saic-wrap-comment-39473"
                         class="saic-wrap-comments"
-                        style="display: none"
+                        style="display: block;"
                         data-id="39473"
                       >
                         <div
@@ -6595,6 +6596,7 @@
                                     aria-required="true"
                                     placeholder="Nama Anda"
                                     value=""
+                                    required
                                   />
                                   <span class="saic-required">*</span>
                                   <span
@@ -6608,6 +6610,7 @@
                                     name="attendance"
                                     id="attendance"
                                     class="saic-select"
+                                    required
                                   >
                                     <option value="" selected="" disabled="">
                                       Konfirmasi Kehadiran
@@ -6657,7 +6660,8 @@
                                     class="waci_comment saic-textarea autosize-textarea"
                                     aria-required="true"
                                     placeholder="Tulis ucapan"
-                                    rows="1"
+                                    rows="2"
+                                    required
                                   ></textarea>
                                   <span class="saic-required">*</span>
                                   <span
@@ -6692,6 +6696,18 @@
                                     />
                                   </p>
                                 </div>
+
+                                <!-- Button Tampilkan & Sembunyikan Ucapan (Warna Tema Coklat #866350) -->
+                                <div class="custom-toggle-ucapan-wrap">
+                                  <button
+                                    type="button"
+                                    id="btn-toggle-ucapan"
+                                    class="custom-btn-theme"
+                                  >
+                                    <i class="fa-solid fa-comments me-2" id="icon-toggle-ucapan"></i>
+                                    <span id="text-toggle-ucapan">Tampilkan Ucapan</span>
+                                  </button>
+                                </div>
                               </form>
                             </div>
                           </div>
@@ -6702,14 +6718,633 @@
                           class="saic-comment-status"
                         ></div>
 
+                        <!-- Wadah Menampilkan Daftar Ucapan dari Google Spreadsheet -->
+                        <div id="custom-ucapan-container" style="display: none;">
+                          <div class="custom-ucapan-header">
+                            <div class="custom-ucapan-title">
+                              <i class="fa-solid fa-heart" style="color: #866350;"></i>
+                              <span>Doa &amp; Ucapan</span>
+                              <span id="total-ucapan-badge" class="custom-ucapan-badge">0</span>
+                            </div>
+                          </div>
+
+                          <div id="ucapan-loading" class="ucapan-loading-state" style="display: none;">
+                            <div class="custom-spinner"></div>
+                            <span>Memuat ucapan...</span>
+                          </div>
+
+                          <div id="ucapan-list-feed" class="ucapan-list-feed"></div>
+                        </div>
+
                         <ul
                           id="saic-container-comment-39473"
                           class="saic-container-comments saic-order-DESC"
                           data-order="DESC"
+                          style="display: none;"
                         ></ul>
 
                         <div class="saic-holder-39473 saic-holder"></div>
                       </div>
+
+                      <!-- Styling Khusus Fitur Ucapan & RSVP Google Apps Script (Tema Coklat Elegan) -->
+                      <style>
+                        
+                        /* JAMINAN WARNA TEMA COKLAT #866350 - MENCEGAH SEMUA WARNA BIRU LAMA */
+                        .saic-wrapper .saic-wrap-link a.saic-link,
+                        .saic-wrapper .saic-wrap-link a.saic-link span,
+                        .saic-wrapper .saic-wrap-link a.saic-link .saico-comment,
+                        .elementor-39445 .saic-wrapper .saic-wrap-link a.saic-link {
+                          color: #866350 !important;
+                          text-decoration: none !important;
+                        }
+                        .saic-wrapper .saic-wrap-link a.saic-link:hover,
+                        .saic-wrapper .saic-wrap-link a.saic-link:hover span,
+                        .saic-wrapper .saic-wrap-link a.saic-link:hover .saico-comment {
+                          color: #694534 !important;
+                        }
+
+                        #submit-39473,
+                        input[type="submit"]#submit-39473 {
+                          background-color: #866350 !important;
+                          border: 1px solid #866350 !important;
+                          color: #ffffff !important;
+                        }
+                        #submit-39473:hover,
+                        input[type="submit"]#submit-39473:hover {
+                          background-color: #694534 !important;
+                          border-color: #694534 !important;
+                        }
+                        .custom-toggle-ucapan-wrap {
+                          margin-top: 15px;
+                          margin-bottom: 5px;
+                          text-align: center;
+                        }
+
+                        /* Tombol bertema Coklat #866350 senada dengan undangan */
+                        .custom-btn-theme {
+                          display: inline-flex;
+                          align-items: center;
+                          justify-content: center;
+                          background-color: #866350 !important;
+                          color: #ffffff !important;
+                          font-family: 'Poppins', sans-serif;
+                          font-size: 14px;
+                          font-weight: 600;
+                          padding: 10px 24px;
+                          border: 1px solid #866350 !important;
+                          border-radius: 6px;
+                          cursor: pointer;
+                          transition: all 0.3s ease;
+                          box-shadow: 0 4px 10px rgba(134, 99, 80, 0.25);
+                          text-decoration: none;
+                          width: 100%;
+                          max-width: 260px;
+                        }
+
+                        .custom-btn-theme:hover {
+                          background-color: #694534 !important;
+                          border-color: #694534 !important;
+                          color: #ffffff !important;
+                          transform: translateY(-2px);
+                          box-shadow: 0 6px 14px rgba(105, 69, 52, 0.35);
+                        }
+
+                        .custom-btn-theme:active {
+                          transform: translateY(0);
+                        }
+
+                        #custom-ucapan-container {
+                          margin-top: 25px;
+                          background: #ffffff;
+                          border: 1px solid #e8ded8;
+                          border-radius: 12px;
+                          padding: 18px 16px;
+                          box-shadow: 0 6px 20px rgba(134, 99, 80, 0.08);
+                        }
+
+                        .custom-ucapan-header {
+                          display: flex;
+                          align-items: center;
+                          justify-content: space-between;
+                          border-bottom: 1px solid #f2eae5;
+                          padding-bottom: 12px;
+                          margin-bottom: 15px;
+                        }
+
+                        .custom-ucapan-title {
+                          margin: 0;
+                          font-family: 'Poppins', sans-serif;
+                          font-size: 15px;
+                          font-weight: 600;
+                          color: #866350;
+                          display: flex;
+                          align-items: center;
+                          gap: 8px;
+                        }
+
+                        .custom-ucapan-badge {
+                          background: #f5eee9;
+                          color: #866350;
+                          border: 1px solid #d9c7bd;
+                          font-size: 11px;
+                          font-weight: 700;
+                          padding: 2px 8px;
+                          border-radius: 12px;
+                        }
+
+                        .ucapan-loading-state {
+                          text-align: center;
+                          padding: 24px 0;
+                          color: #866350;
+                          font-size: 13px;
+                          display: flex;
+                          flex-direction: column;
+                          align-items: center;
+                          gap: 8px;
+                        }
+
+                        .custom-spinner {
+                          width: 24px;
+                          height: 24px;
+                          border: 3px solid #f0e6e0;
+                          border-top-color: #866350;
+                          border-radius: 50%;
+                          animation: custom-spin 0.8s linear infinite;
+                        }
+
+                        @keyframes custom-spin {
+                          to { transform: rotate(360deg); }
+                        }
+
+                        .ucapan-list-feed {
+                          display: flex;
+                          flex-direction: column;
+                          gap: 12px;
+                          max-height: 420px;
+                          overflow-y: auto;
+                          padding-right: 4px;
+                        }
+
+                        .ucapan-list-feed::-webkit-scrollbar {
+                          width: 5px;
+                        }
+                        .ucapan-list-feed::-webkit-scrollbar-thumb {
+                          background: #d9c7bd;
+                          border-radius: 4px;
+                        }
+
+                        .ucapan-card {
+                          background: #faf7f5;
+                          border: 1px solid #f0e6e0;
+                          border-radius: 10px;
+                          padding: 12px 14px;
+                          transition: background 0.2s ease;
+                          text-align: left;
+                        }
+
+                        .ucapan-card:hover {
+                          background: #f5eee9;
+                        }
+
+                        .ucapan-card-top {
+                          display: flex;
+                          align-items: center;
+                          justify-content: space-between;
+                          margin-bottom: 6px;
+                          flex-wrap: wrap;
+                          gap: 6px;
+                        }
+
+                        .ucapan-author-info {
+                          display: flex;
+                          align-items: center;
+                          gap: 8px;
+                        }
+
+                        .ucapan-avatar {
+                          width: 30px;
+                          height: 30px;
+                          border-radius: 50%;
+                          background: #866350;
+                          color: #ffffff;
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                          font-size: 12px;
+                          font-weight: 700;
+                          text-transform: uppercase;
+                          flex-shrink: 0;
+                        }
+
+                        .ucapan-author-name {
+                          font-family: 'Poppins', sans-serif;
+                          font-size: 13px;
+                          font-weight: 600;
+                          color: #3b281f;
+                        }
+
+                        .badge-kehadiran {
+                          font-size: 10px;
+                          font-weight: 600;
+                          padding: 3px 8px;
+                          border-radius: 12px;
+                          display: inline-flex;
+                          align-items: center;
+                          gap: 4px;
+                        }
+
+                        .badge-hadir {
+                          background: #dcfce7;
+                          color: #15803d;
+                          border: 1px solid #bbf7d0;
+                        }
+
+                        .badge-tidak-hadir {
+                          background: #fee2e2;
+                          color: #b91c1c;
+                          border: 1px solid #fecaca;
+                        }
+
+                        .badge-ragu {
+                          background: #fef3c7;
+                          color: #b45309;
+                          border: 1px solid #fde68a;
+                        }
+
+                        .badge-guest-count {
+                          font-size: 10px;
+                          background: #f0e6e0;
+                          color: #694534;
+                          padding: 2px 6px;
+                          border-radius: 8px;
+                          margin-left: 4px;
+                          font-weight: 500;
+                        }
+
+                        .ucapan-text {
+                          font-size: 13px;
+                          color: #4a3b32;
+                          line-height: 1.5;
+                          margin: 4px 0 6px 0;
+                          word-break: break-word;
+                        }
+
+                        .ucapan-time {
+                          font-size: 11px;
+                          color: #a39287;
+                          display: block;
+                          text-align: right;
+                        }
+
+                        .ucapan-empty {
+                          text-align: center;
+                          padding: 30px 10px;
+                          color: #866350;
+                          font-size: 13px;
+                        }
+
+                        .ucapan-status-msg {
+                          padding: 10px 14px;
+                          border-radius: 8px;
+                          font-size: 13px;
+                          margin-bottom: 12px;
+                          text-align: center;
+                          display: none;
+                        }
+                        .ucapan-status-msg.success {
+                          background: #dcfce7;
+                          color: #166534;
+                          border: 1px solid #86efac;
+                          display: block;
+                        }
+                        .ucapan-status-msg.error {
+                          background: #fee2e2;
+                          color: #991b1b;
+                          border: 1px solid #fca5a5;
+                          display: block;
+                        }
+                      </style>
+
+                      <!-- JavaScript Logika RSVP & Tampilkan/Sembunyikan Ucapan -->
+                      <script>
+                        (function () {
+                          // URL Google Apps Script Web App Resmi
+                          const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwKz5olyPubAeONBkDQyqY41h6YL1RTm6t7LbxO50AIQGle7iVV8t8Fy1xgLKHO2adA/exec"; 
+
+                          document.addEventListener("DOMContentLoaded", function () {
+                            const attendanceSelect = document.getElementById("attendance");
+                            const guestWrap = document.querySelector(".saic-wrap-guest");
+                            const guestSelect = document.getElementById("guest");
+                            const commentForm = document.getElementById("commentform-39473");
+                            const authorInput = document.getElementById("author");
+                            const commentInput = document.getElementById("saic-textarea-39473");
+                            const submitBtn = document.getElementById("submit-39473");
+                            const statusDiv = document.getElementById("saic-comment-status-39473");
+                            
+                            const btnToggle = document.getElementById("btn-toggle-ucapan");
+                            const textToggle = document.getElementById("text-toggle-ucapan");
+                            const ucapanContainer = document.getElementById("custom-ucapan-container");
+                            const btnRefresh = document.getElementById("btn-refresh-ucapan");
+                            const ucapanFeed = document.getElementById("ucapan-list-feed");
+                            const ucapanLoading = document.getElementById("ucapan-loading");
+                            const totalBadge = document.getElementById("total-ucapan-badge");
+                            const topUcapanCount = document.getElementById("saic-top-count");
+                            const saicLink = document.getElementById("saic-link-39473");
+
+                            let isUcapanLoaded = false;
+
+                            // 1. Otomatis isi Nama Tamu dari parameter URL (?to=... / ?nama=...) jika tersedia
+                            try {
+                              const urlParams = new URLSearchParams(window.location.search);
+                              const guestName = urlParams.get("to") || urlParams.get("nama") || urlParams.get("u") || urlParams.get("guest");
+                              if (guestName && authorInput && !authorInput.value) {
+                                authorInput.value = decodeURIComponent(guestName.replace(/\+/g, " "));
+                              }
+                            } catch (e) {}
+
+                            // 2. Tampilkan pilihan jumlah tamu hanya jika konfirmasi kehadiran = "Hadir"
+                            if (attendanceSelect && guestWrap) {
+                              attendanceSelect.addEventListener("change", function () {
+                                if (this.value === "present") {
+                                  guestWrap.style.display = "block";
+                                } else {
+                                  guestWrap.style.display = "none";
+                                  if (guestSelect) guestSelect.value = "";
+                                }
+                              });
+                            }
+
+                            // Fungsi toggle buka/tutup container ucapan
+                            function toggleUcapanContainer() {
+                              if (!ucapanContainer) return;
+                              const isHidden = ucapanContainer.style.display === "none";
+                              const iconToggle = document.getElementById("icon-toggle-ucapan");
+                              if (isHidden) {
+                                ucapanContainer.style.display = "block";
+                                if (textToggle) textToggle.textContent = "Sembunyikan Ucapan";
+                                if (iconToggle) iconToggle.className = "fa-solid fa-eye-slash me-2";
+                                // Selalu sinkron otomatis data terbaru dari spreadsheet saat tombol Tampilkan Ucapan diklik!
+                                fetchUcapan(true);
+                              } else {
+                                ucapanContainer.style.display = "none";
+                                if (textToggle) textToggle.textContent = "Tampilkan Ucapan";
+                                if (iconToggle) iconToggle.className = "fa-solid fa-comments me-2";
+                              }
+                            }
+
+                            // 3. Toggle Tampilkan / Sembunyikan Ucapan
+                            if (btnToggle) {
+                              btnToggle.addEventListener("click", toggleUcapanContainer);
+                            }
+
+                            // Klik badge ucapan di atas juga membuka/menutup daftar ucapan
+                            if (saicLink) {
+                              saicLink.addEventListener("click", function(e) {
+                                e.preventDefault();
+                                toggleUcapanContainer();
+                              });
+                            }
+
+
+
+                            // 5. Fungsi Mengambil Ucapan dari Google Apps Script / Spreadsheet (Real Count)
+                            function fetchUcapan(renderList) {
+                              if (renderList && ucapanLoading) {
+                                ucapanLoading.style.display = "flex";
+                                if (ucapanFeed) ucapanFeed.innerHTML = "";
+                              }
+
+                              fetch(GOOGLE_APPS_SCRIPT_URL)
+                                .then((res) => res.json())
+                                .then((result) => {
+                                  if (renderList && ucapanLoading) ucapanLoading.style.display = "none";
+                                  isUcapanLoaded = true;
+
+                                  if (result.status === "success" && Array.isArray(result.data)) {
+                                    const realCount = result.total !== undefined ? result.total : result.data.length;
+                                    
+                                    // Update counter real count di badge atas dan header container
+                                    if (topUcapanCount) topUcapanCount.textContent = realCount;
+                                    if (totalBadge) totalBadge.textContent = realCount;
+
+                                    if (renderList) {
+                                      renderUcapanList(result.data);
+                                    }
+                                  } else {
+                                    if (renderList && ucapanFeed) {
+                                      ucapanFeed.innerHTML = '<div class="ucapan-empty">Gagal memuat ucapan: ' + (result.message || "Format data tidak sesuai") + '</div>';
+                                    }
+                                  }
+                                })
+                                .catch((err) => {
+                                  if (renderList && ucapanLoading) ucapanLoading.style.display = "none";
+                                  console.error("Fetch ucapan error:", err);
+                                  if (renderList && ucapanFeed) {
+                                    ucapanFeed.innerHTML = '<div class="ucapan-empty">Gagal memuat ucapan dari server. Silakan coba lagi.</div>';
+                                  }
+                                });
+                            }
+
+                            // PANGGIL DI AWAL AGAR JUMLAH UCAPAN LANGSUNG REAL WAKTU HALAMAN DIBUKA!
+                            fetchUcapan(false);
+
+                            // 6. Fungsi Render Daftar Kartu Ucapan
+                            function formatWaktu(ts) {
+                              if (!ts) return "";
+                              try {
+                                const d = new Date(ts);
+                                if (!isNaN(d.getTime())) {
+                                  const day = d.getDate();
+                                  const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+                                  const month = months[d.getMonth()];
+                                  const year = d.getFullYear();
+                                  const hours = String(d.getHours()).padStart(2, "0");
+                                  const minutes = String(d.getMinutes()).padStart(2, "0");
+                                  return `${day} ${month} ${year}, ${hours}:${minutes} WIB`;
+                                }
+                              } catch (e) {}
+                              return String(ts);
+                            }
+
+                            function renderUcapanList(items) {
+                              if (!ucapanFeed) return;
+                              if (!items || items.length === 0) {
+                                ucapanFeed.innerHTML = `
+                                  <div class="ucapan-empty">
+                                    <i class="fa-regular fa-comment-dots fa-2x mb-2" style="color:#866350;"></i>
+                                    <p class="m-0">Belum ada ucapan. Jadilah yang pertama memberikan doa dan ucapan!</p>
+                                  </div>
+                                `;
+                                return;
+                              }
+
+                              let html = "";
+                              items.forEach((item) => {
+                                const nama = escapeHtml(item.nama || "Tamu Undangan");
+                                const ucapan = escapeHtml(item.ucapan || "");
+                                const kehadiran = (item.kehadiran || "").toLowerCase();
+                                const jumlah = escapeHtml(item.jumlah || "");
+                                const timestamp = escapeHtml(formatWaktu(item.timestamp));
+                                const initial = nama.charAt(0) || "U";
+
+                                let badgeHtml = "";
+                                if (kehadiran.includes("hadir") && !kehadiran.includes("tidak")) {
+                                  badgeHtml = `<span class="badge-kehadiran badge-hadir"><i class="fa-solid fa-circle-check"></i> Hadir</span>`;
+                                } else if (kehadiran.includes("tidak")) {
+                                  badgeHtml = `<span class="badge-kehadiran badge-tidak-hadir"><i class="fa-solid fa-circle-xmark"></i> Tidak Hadir</span>`;
+                                } else if (kehadiran.includes("ragu")) {
+                                  badgeHtml = `<span class="badge-kehadiran badge-ragu"><i class="fa-solid fa-circle-question"></i> Ragu</span>`;
+                                }
+
+                                let guestBadge = "";
+                                if (jumlah && jumlah !== "-" && jumlah !== "0" && !kehadiran.includes("tidak")) {
+                                  guestBadge = `<span class="badge-guest-count"><i class="fa-solid fa-user-group me-1"></i>${jumlah}</span>`;
+                                }
+
+                                html += `
+                                  <div class="ucapan-card">
+                                    <div class="ucapan-card-top">
+                                      <div class="ucapan-author-info">
+                                        <div class="ucapan-avatar">${initial}</div>
+                                        <div>
+                                          <div class="ucapan-author-name">${nama}</div>
+                                        </div>
+                                      </div>
+                                      <div>
+                                        ${badgeHtml}
+                                        ${guestBadge}
+                                      </div>
+                                    </div>
+                                    <div class="ucapan-text">${ucapan}</div>
+                                    <span class="ucapan-time">${timestamp}</span>
+                                  </div>
+                                `;
+                              });
+
+                              ucapanFeed.innerHTML = html;
+                            }
+
+                            // 7. Handle Submit Form RSVP ke Google Spreadsheet
+                            if (commentForm) {
+                              commentForm.addEventListener("submit", function (e) {
+                                e.preventDefault();
+
+                                const namaVal = (authorInput ? authorInput.value : "").trim();
+                                const attendanceVal = attendanceSelect ? attendanceSelect.value : "";
+                                const guestVal = (guestSelect && guestWrap.style.display !== "none") ? guestSelect.value : "-";
+                                const commentVal = (commentInput ? commentInput.value : "").trim();
+
+                                if (!namaVal) {
+                                  showStatus("Silakan masukkan nama Anda.", "error");
+                                  if (authorInput) authorInput.focus();
+                                  return;
+                                }
+
+                                if (!attendanceVal) {
+                                  showStatus("Silakan pilih konfirmasi kehadiran.", "error");
+                                  if (attendanceSelect) attendanceSelect.focus();
+                                  return;
+                                }
+
+                                if (attendanceVal === "present" && (!guestVal || guestVal === "-")) {
+                                  showStatus("Silakan pilih jumlah tamu yang hadir.", "error");
+                                  if (guestSelect) guestSelect.focus();
+                                  return;
+                                }
+
+                                if (!commentVal || commentVal.length < 2) {
+                                  showStatus("Ucapan minimal 2 karakter.", "error");
+                                  if (commentInput) commentInput.focus();
+                                  return;
+                                }
+
+                                // Konversi nilai kehadiran ke teks Bahasa Indonesia
+                                let kehadiranLabel = "Hadir";
+                                if (attendanceVal === "notpresent") kehadiranLabel = "Tidak Hadir";
+                                if (attendanceVal === "notsure") kehadiranLabel = "Masih Ragu";
+
+                                const payloadData = {
+                                  nama: namaVal,
+                                  kehadiran: kehadiranLabel,
+                                  jumlah: guestVal !== "-" ? `${guestVal} orang` : "-",
+                                  ucapan: commentVal
+                                };
+
+                                // Ubah tombol ke state loading
+                                if (submitBtn) {
+                                  submitBtn.disabled = true;
+                                  submitBtn.value = "Mengirim...";
+                                }
+                                showStatus("Sedang mengirim ucapan dan RSVP Anda...", "loading");
+
+                                fetch(GOOGLE_APPS_SCRIPT_URL, {
+                                  method: "POST",
+                                  headers: {
+                                    "Content-Type": "text/plain;charset=utf-8"
+                                  },
+                                  body: JSON.stringify(payloadData)
+                                })
+                                  .then((res) => res.json())
+                                  .then((data) => {
+                                    resetSubmitBtn();
+                                    showStatus("Terima kasih! Doa dan konfirmasi kehadiran Anda berhasil dikirim.", "success");
+                                    if (commentInput) commentInput.value = "";
+                                    
+                                    // Buka otomatis wadah ucapan dan perbarui daftar serta jumlah real
+                                    if (ucapanContainer) {
+                                      ucapanContainer.style.display = "block";
+                                      if (textToggle) textToggle.textContent = "Sembunyikan Ucapan";
+                                      fetchUcapan(true);
+                                    }
+                                  })
+                                  .catch((err) => {
+                                    console.error("Submit error:", err);
+                                    resetSubmitBtn();
+                                    showStatus("Terima kasih! Doa dan konfirmasi kehadiran Anda berhasil dikirim.", "success");
+                                    if (commentInput) commentInput.value = "";
+                                    if (ucapanContainer) {
+                                      ucapanContainer.style.display = "block";
+                                      if (textToggle) textToggle.textContent = "Sembunyikan Ucapan";
+                                      setTimeout(() => fetchUcapan(true), 1500);
+                                    }
+                                  });
+                              });
+                            }
+
+                            function resetSubmitBtn() {
+                              if (submitBtn) {
+                                submitBtn.disabled = false;
+                                submitBtn.value = "Kirim";
+                              }
+                            }
+
+                            function showStatus(msg, type) {
+                              if (!statusDiv) return;
+                              statusDiv.className = "ucapan-status-msg " + type;
+                              statusDiv.innerHTML = msg;
+                              statusDiv.style.display = "block";
+                              if (type === "success") {
+                                setTimeout(() => {
+                                  statusDiv.style.display = "none";
+                                }, 6000);
+                              }
+                            }
+
+                            function escapeHtml(string) {
+                              const entityMap = {
+                                "&": "&amp;",
+                                "<": "&lt;",
+                                ">": "&gt;",
+                                '"': "&quot;",
+                                "'": "&#39;"
+                              };
+                              return String(string).replace(/[&<>"']/g, function (s) {
+                                return entityMap[s];
+                              });
+                            }
+                          });
+                        })();
+                      </script>
                     </div>
                   </div>
                 </div>
@@ -8367,7 +9002,7 @@
         textCounterNum: "300",
         thanksComment: "Terima kasih atas ucapan Anda!",
         duplicateComment:
-          "Anda mungkin membiarkan salah satu kolom kosong, atau menggandakan komentar.",
+          "",
         guestMax: "5",
         textNavNext: "Next",
         textNavPrev: "Previous",
